@@ -250,6 +250,6 @@ def moderate_video_route():
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5003))
+    port = int(os.getenv("PORT", 8002))
     logger.info(f"Starting NudNet Moderation Server on port {port}...")
     app.run(host="0.0.0.0", port=port, debug=False)
