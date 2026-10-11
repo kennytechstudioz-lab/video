@@ -13,23 +13,24 @@ logger = logging.getLogger("NudNetVideoService")
 app = Flask(__name__)
 
 # Configurable thresholds
-CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.40"))
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))
 MAX_FRAMES_TO_SAMPLE = int(os.getenv("MAX_FRAMES_TO_SAMPLE", "60"))
 
-# Unsafe label keywords for NudeNet v3
-UNSAFE_KEYWORDS = [
-    "GENITALIA",
-    "ANUS",
-    "BREAST_EXPOSED",
+# Only truly exposed genitalia, exposed anus, exposed breasts, and exposed buttocks are NSFW.
+# NEVER flag covered labels (_COVERED) as unsafe.
+EXACT_UNSAFE_LABELS = {
+    "FEMALE_GENITALIA_EXPOSED",
+    "MALE_GENITALIA_EXPOSED",
+    "ANUS_EXPOSED",
+    "FEMALE_BREAST_EXPOSED",
     "BUTTOCKS_EXPOSED",
-]
+}
 
 
 def is_unsafe_label(label: str) -> bool:
     if not label:
         return False
-    label_upper = label.upper()
-    return any(keyword in label_upper for keyword in UNSAFE_KEYWORDS)
+    return label.upper().strip() in EXACT_UNSAFE_LABELS
 
 
 # Lazy loading detector
